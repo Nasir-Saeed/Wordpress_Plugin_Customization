@@ -27,68 +27,69 @@ if (!function_exists('wpdo_plugin_scripts')) {
     function wpdo_plugin_scripts()
     {
         wp_enqueue_style('wpdo-css', WPDO_PLUGIN_DIR . '/assets/css/style.css');
-        wp_enqueue_script('wpdo-js', WPDO_PLUGIN_DIR . '/assets/js/main.js');
+        wp_enqueue_style('wpdo-css', WPDO_PLUGIN_DIR . '/assets/css/bootstrap.min.css');
+        wp_enqueue_script('wpdo-js', WPDO_PLUGIN_DIR . '/assets/js/main.js', array('jquery'), null, true);
     }
     add_action('wp_enqueue_scripts', 'wpdo_plugin_scripts');
 }
 
-
-function wpdo_settings_page_html()
+function add_custom_buttons_after_product_image()
 {
-    if(!is_admin()){
-        return;
-    }?>
-        <div class="wrap">
-            <form action="options.php" method="post">
-                <?php
-                    settings_fields('wpdo-settings');
-                    do_settings_sections('wpdo-settings');
-                    submit_button('Save Changes');
-                ?>
-            </form>
+    ?>
+    <div class="custom-buttons">
+        <button id="button1" class="btn btn-primary">Button 1</button>
+        <button class="button2">Button 2</button>
+        <button class="button3">Button 3</button>
+        <button class="button4">Button 4</button>
+    </div>
+
+    <!-- Modal -->
+    <div id="myModal" class="modal">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <p>Hello World</p>
         </div>
-    <?
-}
-
-function wpdo_register_menu_page()
-{
-    add_menu_page('WPDO Like System', 'WPDO Settings', 'manage_options', 'wpdo-settings', 'wpdo_settings_page_html', 'dashicons-thumbs-up', 30);
-}
-add_action('admin_menu', 'wpdo_register_menu_page');
-
-function wpdo_plugin_settings()
-{
-    register_setting('wpdo_settings','wpdo_like_btn_label');
-    register_setting('wpdo_settings','wpdo_dislike_btn_label');
-
-    // register a new section in the "reading" page
-    add_settings_section(
-        'wpdo__label_settings_section',
-        'WPDO Button Labels',
-        'wpdo_plugin_settings_section_cb',
-        'wpdo_settings'
-    );
-
-    // register a new field in the "wpdo_settings_section" section, inside the "reading" page
-    add_settings_field(
-        'wpdo_like_label_field',
-        'Like Button Label',
-        'wpdo_like_label_field_cb ',
-        'wpdo_settings',
-        'wpdo__label_settings_section'
-    );
-
-}
-
-add_action('admin_init', 'wpdo_plugin_settings');
-
-function wpdo_plugin_settings_section_cb(){
-    echo '<p>Define Button Labels</p>';
-}
-function wpdo_like_label_field_cb(){
-    $setting = get_option('wpdo_like_btn_label');
-	?>
-	<input type="text" name="wpdo_like_btn_label" value="<?php echo isset( $setting ) ? esc_attr( $setting ) : ''; ?>">
+    </div>
     <?php
-    
-}?>
+}
+add_action('woocommerce_product_thumbnails', 'add_custom_buttons_after_product_image');
+
+function menu_settings_cb()
+{
+    echo '<h1>Wpdo Thumbnails Buttons Settings</h1>';
+}
+
+function sub_menu_settings_cb()
+{
+    echo '<h1>All Buttons</h1>';
+    ?>
+    <form action="" method="post">
+        <label for="button_name">Button Name:</label>
+        <input type="text" id="button_name" name="button_name" placeholder="Enter button name"><br><br>
+
+        <label for="button_link">Button Link:</label>
+        <input type="url" id="button_link" name="button_link" placeholder="Enter button link"><br><br>
+
+        <input type="submit" value="Submit">
+    </form>
+    <?php
+}
+function add_custom_menu_page()
+{
+    add_menu_page('Wpdo Thumbnails Buttons', 'Wpdo Buttons', 'manage_options', 'wpdo-settings', 'menu_settings_cb', 'dashicons-admin-site-alt2', 30);
+}
+function add_custom_menu_page_two()
+{
+    add_submenu_page(
+        'wpdo-settings',
+        'All Buttons',
+        'Button 01',
+        'manage_options',
+        'wpdo-settings-button-01',
+        'sub_menu_settings_cb'
+    );
+}
+
+add_action('admin_menu', 'add_custom_menu_page');
+add_action('admin_menu', 'add_custom_menu_page_two');
+?>
