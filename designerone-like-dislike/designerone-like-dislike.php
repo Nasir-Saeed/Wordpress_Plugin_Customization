@@ -54,7 +54,7 @@ function wpdo_register_menu_page()
 {
     add_menu_page('WPDO Like System', 'WPDO Settings', 'manage_options', 'wpdo-settings', 'wpdo_settings_page_html', 'dashicons-thumbs-up', 30);
 }
-add_action('admin_menu ', 'wpdo_register_menu_page');
+add_action('admin_menu', 'wpdo_register_menu_page');
 
 function wpdo_plugin_settings()
 {
@@ -73,7 +73,7 @@ function wpdo_plugin_settings()
     add_settings_field(
         'wpdo_like_label_field',
         'Like Button Label',
-        'wpdo_like_label_field_cb',
+        'wpdo_like_label_field_cb ',
         'wpdo_settings',
         'wpdo__label_settings_section'
     );
