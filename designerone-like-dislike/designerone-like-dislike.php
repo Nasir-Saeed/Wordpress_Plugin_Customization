@@ -43,15 +43,18 @@ function add_custom_buttons_after_product_image()
     <div class="custom-buttons">
         <!-- <button id="button1" class="btn btn-primary">Button 1</button> -->
         <!-- Button trigger modal -->
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#ImageModalCenter">
             Images
+        </button>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#TemplateModalCenter">
+            Template
         </button>
         <button class="button2">Button 2</button>
         <button class="button3">Button 3</button>
         <button class="button4">Button 4</button>
     </div>
-    <!-- Modal -->
-    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+    <!--Images Modal -->
+    <div class="modal fade" id="ImageModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
         aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -90,20 +93,88 @@ function add_custom_buttons_after_product_image()
                                                     class="dashicons dashicons-download"></i></a>
                                         </td>
                                     </tr>
-                        </div>
-                        <?php
+                                    <?php
                                 }
                                 ?>
-                    </tbody>
-                    </table>
-                </div>
+                            </tbody>
+                        </table>
+                    </div>
 
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
             </div>
         </div>
     </div>
+    <!--Template Modal -->
+    <div class="modal fade" id="TemplateModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle"
+        aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Images</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close" id="closebtn">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="product-gallery">
+                        <table class="gallery-table">
+                            <tbody>
+                                <?php
+                                // Check if the product is variable
+                                if ($product->is_type('variable')) {
+                                    // Get the variations
+                                    $variations = $product->get_available_variations();
+
+                                    // Loop through the variations
+                                    foreach ($variations as $variation) {
+                                        // Get variation attributes
+                                        $attributes = $variation['attributes'];
+
+                                        // Get the variation image URL
+                                        $variation_image_url = $variation['image']['url'];
+
+                                        // Get the variation title (name)
+                                        $variation_title = implode(' / ', array_map('wc_attribute_label', $attributes));
+
+                                        // Get the variation color (assuming color is one of the attributes)
+                                        $variation_color = isset($attributes['attribute_pa_color']) ? $attributes['attribute_pa_color'] : '';
+
+                                        // Get the variation URL
+                                        $variation_url = get_permalink($variation['variation_id']);
+
+                                        // Output the variation details within a table row
+                                        ?>
+                                        <tr class="gallery-item">
+                                            <td><?php echo $variation_title; ?></td>
+                                            <td><?php echo $variation_color; ?></td>
+                                            <td><img src="<?php echo $variation_image_url; ?>" alt="<?php echo $variation_title; ?>"
+                                                    width="100px"></td>
+                                            <td><a href="<?php echo $variation_url; ?>"><i
+                                                        class="dashicons dashicons-arrow-right-alt"></i></a></td>
+                                        </tr>
+                                        <?php
+                                    }
+                                } else {
+                                    // If the product is not variable, display a message or fallback content
+                                    ?>
+                                    <tr>
+                                        <td colspan="4">This product does not have variations.</td>
+                                    </tr>
+                                    <?php
+                                }
+                                ?>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
     </div>
     <?php
 }
