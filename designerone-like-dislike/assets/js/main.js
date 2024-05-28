@@ -1,3 +1,4 @@
+// main.js
 // document.addEventListener('DOMContentLoaded', function() {
 //     let btn1 = document.getElementById('button1');
 //     btn1.addEventListener("click", function() {
