@@ -125,35 +125,40 @@ function add_custom_buttons_after_product_image()
                                 <?php
                                 // Check if the product is variable
                                 if ($product->is_type('variable')) {
-                                    // Get the variations
-                                    $variations = $product->get_available_variations();
-
                                     // Loop through the variations
-                                    foreach ($variations as $variation) {
+                                    foreach ($product->get_available_variations() as $variation) {
                                         // Get variation attributes
                                         $attributes = $variation['attributes'];
 
                                         // Get the variation image URL
-                                        $variation_image_url = $variation['image']['url'];
-
-                                        // Get the variation title (name)
-                                        $variation_title = implode(' / ', array_map('wc_attribute_label', $attributes));
-
-                                        // Get the variation color (assuming color is one of the attributes)
-                                        $variation_color = isset($attributes['attribute_pa_color']) ? $attributes['attribute_pa_color'] : '';
-
+                                        $variation_image_id = $variation['image_id']; // Get the image ID
+                                        $variation_image_url = wp_get_attachment_image_src($variation_image_id, 'full')[0]; // Get the image URL
+                            
                                         // Get the variation URL
                                         $variation_url = get_permalink($variation['variation_id']);
 
-                                        // Output the variation details within a table row
+                                        // Output the variation details with color swatch and download button
                                         ?>
                                         <tr class="gallery-item">
-                                            <td><?php echo $variation_title; ?></td>
-                                            <td><?php echo $variation_color; ?></td>
-                                            <td><img src="<?php echo $variation_image_url; ?>" alt="<?php echo $variation_title; ?>"
-                                                    width="100px"></td>
-                                            <td><a href="<?php echo $variation_url; ?>"><i
-                                                        class="dashicons dashicons-arrow-right-alt"></i></a></td>
+                                            <td class="cfvsw-swatches-option cfvsw-selected-swatch" style="text-align: center;">
+                                                <?php
+                                                // Check if the variation has color attribute
+                                                if (isset($attributes['attribute_pa_color'])) {
+                                                    // Extract color from the attribute
+                                                    $variation_color = $attributes['attribute_pa_color'];
+                                                    ?>
+                                                    <div class="cfvsw-swatch-inner"
+                                                        style="background-color: <?php echo $variation_color; ?>; width: 100px; height: 100px;">
+                                                    </div>
+                                                    <?php
+                                                }
+                                                ?>
+                                            </td>
+                                            <td>
+                                                <a href="<?php echo $variation_image_url; ?>" download class="download-button">
+                                                    Download
+                                                </a>
+                                            </td>
                                         </tr>
                                         <?php
                                     }
@@ -161,7 +166,7 @@ function add_custom_buttons_after_product_image()
                                     // If the product is not variable, display a message or fallback content
                                     ?>
                                     <tr>
-                                        <td colspan="4">This product does not have variations.</td>
+                                        <td colspan="2">This product does not have variations.</td>
                                     </tr>
                                     <?php
                                 }
